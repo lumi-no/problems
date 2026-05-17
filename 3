@@ -1,0 +1,35 @@
+#include <iostream>
+
+using namespace std;
+
+template<typename T>
+class Some
+{
+public:
+    T value;
+
+    Some(T value)
+    {
+        this->value = value;
+    }
+};
+
+class Nothing
+{
+};
+
+int main()
+{
+    Some<int> number(10);
+
+    cout << "Some: "
+         << number.value
+         << endl;
+
+    Nothing empty;
+
+    cout << "Nothing created"
+         << endl;
+
+    return 0;
+}
