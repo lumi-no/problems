@@ -1,0 +1,65 @@
+#include <iostream>
+#include <functional>
+
+using namespace std;
+
+template<typename T>
+class Some
+{
+public:
+    T value;
+
+    Some(T value)
+    {
+        this->value = value;
+    }
+
+    template<typename Func>
+    auto map(Func func)
+    {
+        return Some<decltype(func(value))>(
+            func(value));
+    }
+};
+
+class Nothing
+{
+public:
+
+    template<typename Func>
+    Nothing map(Func func)
+    {
+        return Nothing();
+    }
+};
+
+int main()
+{
+    Some<int> number(5);
+
+    auto result =
+        number.map(
+            [](int x)
+            {
+                return x * 2;
+            });
+
+    cout << "Some("
+         << result.value
+         << ")"
+         << endl;
+
+    Nothing empty;
+
+    auto result2 =
+        empty.map(
+            [](int x)
+            {
+                return x * 2;
+            });
+
+    cout << "Nothing()"
+         << endl;
+
+    return 0;
+}
