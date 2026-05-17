@@ -1,0 +1,82 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class Result
+{
+private:
+    bool ok;
+    string value;
+    string error;
+
+public:
+    Result(bool ok, string value, string error)
+    {
+        this->ok = ok;
+        this->value = value;
+        this->error = error;
+    }
+
+    static Result Ok(string value)
+    {
+        return Result(true, value, "");
+    }
+
+    static Result Error(string error)
+    {
+        return Result(false, "", error);
+    }
+
+    bool isOk() const
+    {
+        return ok;
+    }
+
+    string getValue() const
+    {
+        return value;
+    }
+
+    string getError() const
+    {
+        return error;
+    }
+};
+
+Result readFile(string name)
+{
+    if (name == "data.txt")
+    {
+        return Result::Ok("File content");
+    }
+
+    return Result::Error("file not found");
+}
+
+int main()
+{
+    Result result = readFile("data.txt");
+
+    if (result.isOk())
+    {
+        cout << "Ok: " << result.getValue() << endl;
+    }
+    else
+    {
+        cout << "Error: " << result.getError() << endl;
+    }
+
+    Result result2 = readFile("test.txt");
+
+    if (result2.isOk())
+    {
+        cout << "Ok: " << result2.getValue() << endl;
+    }
+    else
+    {
+        cout << "Error: " << result2.getError() << endl;
+    }
+
+    return 0;
+}
