@@ -1,0 +1,104 @@
+#include <iostream>
+#include <string>
+#include <functional>
+
+using namespace std;
+
+template<typename T>
+class Result
+{
+private:
+    bool ok;
+    T value;
+    string error;
+
+public:
+    Result(T value)
+    {
+        ok = true;
+        this->value = value;
+        error = "";
+    }
+
+    Result(string error)
+    {
+        ok = false;
+        value = T();
+        this->error = error;
+    }
+
+    bool isOk() const
+    {
+        return ok;
+    }
+
+    T getValue() const
+    {
+        return value;
+    }
+
+    string getError() const
+    {
+        return error;
+    }
+
+    Result<T> map(function<T(T)> func) const
+    {
+        if (ok)
+        {
+            return Result<T>(func(value));
+        }
+
+        return Result<T>(error);
+    }
+
+    Result<T> flatMap(
+        function<Result<T>(T)> func) const
+    {
+        if (ok)
+        {
+            return func(value);
+        }
+
+        return Result<T>(error);
+    }
+};
+
+Result<double> safeDivide(double a, double b)
+{
+    if (b == 0)
+    {
+        return Result<double>(
+            "division by zero");
+    }
+
+    return Result<double>(a / b);
+}
+
+int main()
+{
+    Result<double> result =
+        safeDivide(10, 2)
+            .flatMap(
+                [](double x)
+                {
+                    return safeDivide(x, 2);
+                });
+
+    if (result.isOk())
+    {
+        cout << "Ok("
+             << result.getValue()
+             << ")"
+             << endl;
+    }
+    else
+    {
+        cout << "Error("
+             << result.getError()
+             << ")"
+             << endl;
+    }
+
+    return 0;
+}
