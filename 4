@@ -1,0 +1,47 @@
+#include <iostream>
+
+using namespace std;
+
+template<typename T>
+class Some
+{
+public:
+    T value;
+
+    Some(T value)
+    {
+        this->value = value;
+    }
+};
+
+class Nothing
+{
+};
+
+void safeDivide(double a, double b)
+{
+    if (b == 0)
+    {
+        Nothing result;
+
+        cout << "Nothing()" << endl;
+
+        return;
+    }
+
+    Some<double> result(a / b);
+
+    cout << "Some("
+         << result.value
+         << ")"
+         << endl;
+}
+
+int main()
+{
+    safeDivide(10, 2);
+
+    safeDivide(10, 0);
+
+    return 0;
+}
