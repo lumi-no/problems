@@ -4,62 +4,81 @@
 using namespace std;
 
 template<typename T>
-class Some
+class Option
 {
-public:
+private:
+    bool hasValue;
     T value;
 
-    Some(T value)
+public:
+    Option()
     {
+        hasValue = false;
+        value = T();
+    }
+
+    Option(T value)
+    {
+        hasValue = true;
         this->value = value;
     }
 
-    template<typename Func>
-    auto map(Func func)
+    bool isSome()
     {
-        return Some<decltype(func(value))>(
-            func(value));
+        return hasValue;
     }
-};
 
-class Nothing
-{
-public:
-
-    template<typename Func>
-    Nothing map(Func func)
+    T getValue()
     {
-        return Nothing();
+        return value;
+    }
+
+    Option<T> map(function<T(T)> func)
+    {
+        if (hasValue)
+        {
+            return Option<T>(func(value));
+        }
+
+        return Option<T>();
     }
 };
 
 int main()
 {
-    Some<int> number(5);
+    Option<int> some(5);
 
-    auto result =
-        number.map(
-            [](int x)
-            {
-                return x * 2;
-            });
+    Option<int> result = some.map(
+        [](int x)
+        {
+            return x * 2;
+        });
 
-    cout << "Some("
-         << result.value
-         << ")"
-         << endl;
+    if (result.isSome())
+    {
+        cout << "Some(" << result.getValue() << ")" << endl;
+    }
+    else
+    {
+        cout << "Nothing()" << endl;
+    }
 
-    Nothing empty;
+    Option<int> nothing;
 
-    auto result2 =
-        empty.map(
-            [](int x)
-            {
-                return x * 2;
-            });
+    Option<int> result2 = nothing.map(
+        [](int x)
+        {
+            return x * 2;
+        });
 
-    cout << "Nothing()"
-         << endl;
+    if (result2.isSome())
+    {
+        cout << "Some(" << result2.getValue() << ")" << endl;
+    }
+    else
+    {
+        cout << "Nothing()" << endl;
+    }
 
     return 0;
 }
