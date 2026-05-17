@@ -1,0 +1,49 @@
+#include <iostream>
+#include <string>
+#include <utility>
+
+using namespace std;
+
+pair<string, double> safeDivide(double a, double b)
+{
+    if (b == 0)
+    {
+        return {"error", 0};
+    }
+
+    return {"ok", a / b};
+}
+
+int main()
+{
+    pair<string, double> result1 =
+        safeDivide(10, 2);
+
+    pair<string, double> result2 =
+        safeDivide(10, 0);
+
+    if (result1.first == "ok")
+    {
+        cout << "Результат: "
+             << result1.second
+             << endl;
+    }
+    else
+    {
+        cout << "Помилка" << endl;
+    }
+
+    if (result2.first == "ok")
+    {
+        cout << "Результат: "
+             << result2.second
+             << endl;
+    }
+    else
+    {
+        cout << "Помилка: division by zero"
+             << endl;
+    }
+
+    return 0;
+}
