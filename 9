@@ -1,0 +1,93 @@
+#include <iostream>
+#include <string>
+#include <functional>
+
+using namespace std;
+
+template<typename T>
+class Result
+{
+private:
+    bool ok;
+    T value;
+    string error;
+
+public:
+    Result(T value)
+    {
+        ok = true;
+        this->value = value;
+        error = "";
+    }
+
+    Result(string error)
+    {
+        ok = false;
+        value = T();
+        this->error = error;
+    }
+
+    bool isOk() const
+    {
+        return ok;
+    }
+
+    T getValue() const
+    {
+        return value;
+    }
+
+    string getError() const
+    {
+        return error;
+    }
+
+    Result<T> map(function<T(T)> func) const
+    {
+        if (ok)
+        {
+            return Result<T>(func(value));
+        }
+
+        return Result<T>(error);
+    }
+};
+
+int main()
+{
+    Result<int> number(5);
+
+    Result<int> result = number.map(
+        [](int x)
+        {
+            return x * 2;
+        });
+
+    if (result.isOk())
+    {
+        cout << "Ok(" << result.getValue() << ")" << endl;
+    }
+    else
+    {
+        cout << "Error(" << result.getError() << ")" << endl;
+    }
+
+    Result<int> error("division by zero");
+
+    Result<int> result2 = error.map(
+        [](int x)
+        {
+            return x * 2;
+        });
+
+    if (result2.isOk())
+    {
+        cout << "Ok(" << result2.getValue() << ")" << endl;
+    }
+    else
+    {
+        cout << "Error(" << result2.getError() << ")" << endl;
+    }
+
+    return 0;
+}
