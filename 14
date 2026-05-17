@@ -1,0 +1,62 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+struct User
+{
+    string name;
+    int age;
+};
+
+vector<string> validateUser(const User& user)
+{
+    vector<string> errors;
+
+    if (user.name.empty())
+    {
+        errors.push_back(
+            "name is empty");
+    }
+
+    if (user.age < 18)
+    {
+        errors.push_back(
+            "age must be >= 18");
+    }
+
+    return errors;
+}
+
+int main()
+{
+    User user =
+    {
+        "Alice",
+        17
+    };
+
+    vector<string> errors =
+        validateUser(user);
+
+    if (errors.empty())
+    {
+        cout << "User is valid"
+             << endl;
+    }
+    else
+    {
+        cout << "Errors:"
+             << endl;
+
+        for (const string& error : errors)
+        {
+            cout << "- "
+                 << error
+                 << endl;
+        }
+    }
+
+    return 0;
+}
