@@ -1,0 +1,83 @@
+#include <iostream>
+#include <functional>
+
+using namespace std;
+
+template<typename T>
+class Option
+{
+private:
+    bool hasValue;
+    T value;
+
+public:
+    Option()
+    {
+        hasValue = false;
+        value = T();
+    }
+
+    Option(T value)
+    {
+        hasValue = true;
+        this->value = value;
+    }
+
+    bool isSome() const
+    {
+        return hasValue;
+    }
+
+    T getValue() const
+    {
+        return value;
+    }
+
+    Option<T> map(function<T(T)> func) const
+    {
+        if (hasValue)
+        {
+            return Option<T>(func(value));
+        }
+
+        return Option<T>();
+    }
+};
+Option<double> safeDivide(double a, double b)
+{
+    if (b == 0)
+    {
+        return Option<double>();
+    }
+
+    return Option<double>(a / b);
+}
+
+int main()
+{
+    Option<double> result =
+        safeDivide(10, 2)
+            .map([](double x)
+            {
+                return x * 2;
+            })
+            .map([](double x)
+            {
+                return x + 5;
+            });
+
+    if (result.isSome())
+    {
+        cout << "Some("
+             << result.getValue()
+             << ")"
+             << endl;
+    }
+    else
+    {
+        cout << "Nothing()"
+             << endl;
+    }
+
+    return 0;
+}
