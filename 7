@@ -1,0 +1,44 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+template<typename T>
+class Ok
+{
+public:
+    T value;
+
+    Ok(T value)
+    {
+        this->value = value;
+    }
+};
+
+class Error
+{
+public:
+    string message;
+
+    Error(string message)
+    {
+        this->message = message;
+    }
+};
+
+int main()
+{
+    Ok<int> success(10);
+
+    cout << "Ok: "
+         << success.value
+         << endl;
+
+    Error error("Division by zero");
+
+    cout << "Error: "
+         << error.message
+         << endl;
+
+    return 0;
+}
