@@ -1,0 +1,56 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+template<typename T>
+class Ok
+{
+public:
+    T value;
+
+    Ok(T value)
+    {
+        this->value = value;
+    }
+};
+
+class Error
+{
+public:
+    string message;
+
+    Error(string message)
+    {
+        this->message = message;
+    }
+};
+
+void safeDivide(double a, double b)
+{
+    if (b == 0)
+    {
+        Error error("division by zero");
+
+        cout << "Error: "
+             << error.message
+             << endl;
+
+        return;
+    }
+
+    Ok<double> result(a / b);
+
+    cout << "Ok: "
+         << result.value
+         << endl;
+}
+
+int main()
+{
+    safeDivide(10, 2);
+
+    safeDivide(10, 0);
+
+    return 0;
+}
