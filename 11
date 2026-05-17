@@ -1,0 +1,116 @@
+результатом буде Error("division by zero"). pipeline зупиниться на safeDivide(x, 0), тому що відбувається ділення на нуль, після появи Error наступні map або flatMap вже не виконуються.
+
+#include <iostream>
+#include <string>
+#include <functional>
+
+using namespace std;
+
+template<typename T>
+class Result
+{
+private:
+    bool ok;
+    T value;
+    string error;
+
+public:
+    Result(T value)
+    {
+        ok = true;
+        this->value = value;
+        error = "";
+    }
+
+    Result(string error)
+    {
+        ok = false;
+        value = T();
+        this->error = error;
+    }
+
+    bool isOk() const
+    {
+        return ok;
+    }
+
+    T getValue() const
+    {
+        return value;
+    }
+
+    string getError() const
+    {
+        return error;
+    }
+
+    Result<T> map(function<T(T)> func) const
+    {
+        if (ok)
+        {
+            return Result<T>(func(value));
+        }
+
+        return Result<T>(error);
+    }
+
+    Result<T> flatMap(
+        function<Result<T>(T)> func) const
+    {
+        if (ok)
+        {
+            return func(value);
+        }
+
+        return Result<T>(error);
+    }
+};
+
+Result<double> safeDivide(double a, double b)
+{
+    if (b == 0)
+    {
+        return Result<double>(
+            "division by zero");
+    }
+
+    return Result<double>(a / b);
+}
+
+Result<double> safePipeline(double x)
+{
+    return safeDivide(x, 2)
+
+        .map([](double x)
+        {
+            return x + 10;
+        })
+
+        .flatMap([](double x)
+        {
+            return safeDivide(x, 0);
+        });
+}
+
+int main()
+{
+    Result<double> result =
+        safePipeline(20);
+
+    if (result.isOk())
+    {
+        cout << "Ok("
+             << result.getValue()
+             << ")"
+             << endl;
+    }
+    else
+    {
+        cout << "Error("
+             << result.getError()
+             << ")"
+             << endl;
+    }
+
+    return 0;
+}
