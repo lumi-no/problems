@@ -1,0 +1,137 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+class Result
+{
+private:
+    bool ok;
+    int value;
+    string error;
+
+public:
+    Result(bool ok, int value, string error)
+    {
+        this->ok = ok;
+        this->value = value;
+        this->error = error;
+    }
+
+    static Result Ok(int value)
+    {
+        return Result(true, value, "");
+    }
+
+    static Result Error(string error)
+    {
+        return Result(false, 0, error);
+    }
+
+    bool isOk() const
+    {
+        return ok;
+    }
+
+    int getValue() const
+    {
+        return value;
+    }
+
+    string getError() const
+    {
+        return error;
+    }
+};
+
+struct Transaction
+{
+    string amount;
+};
+
+Result parseInt(string text)
+{
+    for (char c : text)
+    {
+        if (!isdigit(c))
+        {
+            return Result::Error(
+                "invalid number: " + text);
+        }
+    }
+
+    return Result::Ok(stoi(text));
+}
+
+Result validatePositive(int value)
+{
+    if (value > 0)
+    {
+        return Result::Ok(value);
+    }
+
+    return Result::Error(
+        "value must be > 0");
+}
+
+int main()
+{
+    vector<Transaction> transactions =
+    {
+        {"100"},
+        {"abc"},
+        {"200"}
+    };
+
+    int total = 0;
+
+    vector<string> errors;
+
+    for (const Transaction& transaction
+         : transactions)
+    {
+        Result parsed =
+            parseInt(transaction.amount);
+
+        if (!parsed.isOk())
+        {
+            errors.push_back(
+                parsed.getError());
+
+            continue;
+        }
+
+        Result validated =
+            validatePositive(
+                parsed.getValue());
+
+        if (!validated.isOk())
+        {
+            errors.push_back(
+                validated.getError());
+
+            continue;
+        }
+
+        total += validated.getValue();
+    }
+
+    cout << "Сума: "
+         << total
+         << endl;
+
+    cout << endl;
+
+    cout << "Помилки:"
+         << endl;
+
+    for (const string& error : errors)
+    {
+        cout << "- "
+             << error
+             << endl;
+    }
+
+    return 0;
+}
