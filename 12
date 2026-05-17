@@ -1,0 +1,100 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+template<typename T>
+class Result
+{
+private:
+    bool ok;
+    T value;
+    string error;
+
+public:
+    Result(T value)
+    {
+        ok = true;
+        this->value = value;
+        error = "";
+    }
+
+    Result(string error)
+    {
+        ok = false;
+        value = T();
+        this->error = error;
+    }
+
+    bool isOk() const
+    {
+        return ok;
+    }
+
+    T getValue() const
+    {
+        return value;
+    }
+
+    string getError() const
+    {
+        return error;
+    }
+};
+
+Result<int> parseInt(string text)
+{
+    for (char c : text)
+    {
+        if (!isdigit(c))
+        {
+            return Result<int>("invalid number");
+        }
+    }
+
+    return Result<int>(stoi(text));
+}
+
+Result<int> validateAge(int age)
+{
+    if (age > 18)
+    {
+        return Result<int>(age);
+    }
+
+    return Result<int>("age must be > 18");
+}
+
+int main()
+{
+    string ageText = "25";
+
+    Result<int> parsed = parseInt(ageText);
+
+    if (!parsed.isOk())
+    {
+        cout << "Error: "
+             << parsed.getError()
+             << endl;
+
+        return 0;
+    }
+
+    Result<int> validated =
+        validateAge(parsed.getValue());
+
+    if (validated.isOk())
+    {
+        cout << "Valid age: "
+             << validated.getValue()
+             << endl;
+    }
+    else
+    {
+        cout << "Error: "
+             << validated.getError()
+             << endl;
+    }
+
+    return 0;
+}
